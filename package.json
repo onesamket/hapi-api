@@ -2,9 +2,9 @@
   "name": "hapi-api",
   "version": "1.0.0",
   "description": "hapi user API development using typescript prisma and Hapi.js",
-  "main": "src/index.ts",
+  "main": "index.ts",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon -e html,hbs,js index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,7 +16,10 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/hapi": "^21.3.7",
+    "@hapi/inert": "^7.1.0",
+    "@hapi/vision": "^7.0.3",
     "@prisma/client": "^5.11.0",
+    "handlebars": "^4.7.8",
     "zod": "^3.22.4"
   },
   "devDependencies": {

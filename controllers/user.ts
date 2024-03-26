@@ -4,7 +4,7 @@ import { userSchema } from "../schemas/user";
 
 const getAllUsers = async (request: Request, h: ResponseToolkit) => {
   const users = await userModel.AllUsers();
-  return h.response(users).code(200);
+  return h.view("user", { users: users }).code(200);
 };
 
 const getUserById = async (request: Request, h: ResponseToolkit) => {
@@ -29,7 +29,7 @@ export const createUser = async (request: Request, h: ResponseToolkit) => {
 
     const { email, password } = validation.data;
     const newUser = await userModel.addUser({ email, password });
-    return h.response(newUser).code(201);
+    return h.view("user", { user: newUser }).code(201);
   } catch (error) {
     console.error("Error creating user:", error);
     return h.response({ message: "Internal server error" }).code(500);
