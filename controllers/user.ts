@@ -3,13 +3,18 @@ import userModel from "../models/user";
 import { userSchema } from "../schemas/user";
 
 const getAllUsers = async (request: Request, h: ResponseToolkit) => {
-  const users = await userModel.AllUsers();
-  return h.view("user", { users: users }).code(200);
+  try {
+    const page = parseInt(request.query.page) || 1;
+    const users = await userModel.getUsers(page);
+    return h.view("user", { users: users }).code(200);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return h.response("Internal Server Error").code(500);
+  }
 };
-
 const getUserById = async (request: Request, h: ResponseToolkit) => {
   const userId = request.params.id;
-  const user = await userModel.UserById(userId);
+  const user = await userModel.getUserById(userId);
   if (!user) {
     return h.response({ message: "User not found" }).code(404);
   }
@@ -28,11 +33,16 @@ export const createUser = async (request: Request, h: ResponseToolkit) => {
     }
 
     const { email, password } = validation.data;
-    const newUser = await userModel.addUser({ email, password });
-    return h.view("user", { user: newUser }).code(201);
+    await userModel.addUser({ email, password });
+    return h.redirect("/users").code(301);
   } catch (error) {
     console.error("Error creating user:", error);
-    return h.response({ message: "Internal server error" }).code(500);
+    return h
+      .view("error-page", {
+        message: "Internal server error",
+        error: "Something wants wrong",
+      })
+      .code(500);
   }
 };
 const updateUser = async (request: Request, h: ResponseToolkit) => {

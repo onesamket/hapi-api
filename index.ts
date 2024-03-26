@@ -2,7 +2,7 @@ import {
   Request,
   ResponseToolkit,
   Server,
-  type ServerApplicationState,
+  ServerApplicationState,
 } from "@hapi/hapi";
 import inert from "@hapi/inert";
 import vision from "@hapi/vision";
@@ -19,13 +19,16 @@ const init = async () => {
       },
     },
   });
+
   await server.register([inert, vision]);
+
   server.views({
     engines: {
       hbs: require("handlebars"),
     },
-    path: path.join(__dirname, "views"),
-    layout: "layout",
+    path: path.join(__dirname, "views", "pages"),
+    layoutPath: path.join(__dirname, "views"),
+    layout: "default",
   });
 
   // Routes
@@ -36,20 +39,23 @@ const init = async () => {
       return h.view("index");
     },
   });
+
   // API route
   server.route({
     method: "GET",
     path: "/api",
     handler: (request: Request, h: ResponseToolkit) => {
-      return h.view("index", { title: "It works fine", name: "Onesmaket" });
+      return h.view("index", {
+        title: "It works fine",
+        name: "Onesmaket",
+      });
     },
   });
-  // register user route
+
+  // Register user routes
   await initRoutes(server);
 
-  // Register more routes
-
-  // starting  server ....
+  // Start server
   await server.start();
   console.log("Server running on %s", server.info.uri);
 };
